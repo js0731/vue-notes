@@ -1,10 +1,10 @@
 ### 前言
 
-有的時候我需要動態的去創建元件，比如說當我按了某個按鈕後，才會去創建 toast 元件，而這樣的功能就要使用到 `Vue.extend(options)`，使用`Vue.extend(options)`會得到一個 VueComponent 子類別，在實體化 Component 時會用到 Extend。
+有的時候會需要動態的去創建元件，比如說當我按了某個按鈕後，才會去創建 toast(狀態訊息) 元件，而這樣的功能就要使用到 `Vue.extend(options)`，使用`Vue.extend(options)`會得到一個 VueComponent 子類別，再透過`new`把這個子類別實體出來，掛載到節點上。
 
 ### 為什麼會有 Vue.extend ?
 
-1. 這個函數的作用，是用來實體化出來一個實體， 這個用來實體化的實體也是一個組件， 稱之為**根實體**。
+1. 這個函數的作用，是用來實體化出來一個實體， 這個用來實體化的實體也是一個元件， 稱之為**根實體**。
 
 2. 出於需求，我們需要拓展一些方法，又不想寫在根實體中，所以Vue.js就給出了一個解決方案，這個方法叫做extend。
 
@@ -88,11 +88,11 @@ YourProject / src / component / toast.js
 import Vue from 'vue'
 import Toast from "./Toast.vue";
 
-// ToastConstructor 實際上是 Toast 元件的構造函數，類似於 Vue 的構造函數，所以可以使用 new 實例化，來創造 Toast 元件。 
+// ToastConstructor 實際上是 Toast 元件的構造函數，所以可以使用 new 實體化，來創造 Toast 元件，並掛載到節點上。 
 const ToastConstructor = Vue.extend(Toast); 
 
 function showToast(text, duration = 2000) {
-	//  toastDOM 是 toast元件實體，它上面有很多實體屬性
+	//  toastDOM 是 toast元件實體。
     const toastDOM = new ToastConstructor({
         el: document.createElement('div'), //
         data() {
@@ -102,6 +102,7 @@ function showToast(text, duration = 2000) {
             }
         }
     })
+    // 把實體化的元件掛載到節點上
     document.body.appendChild(toastDOM.$el)
     setTimeout(() => {
         toastDOM.show = false
@@ -109,6 +110,7 @@ function showToast(text, duration = 2000) {
 }
 
 function toastRegister() {
+    // 註冊全域屬性
     Vue.prototype.$toast = showToast
 }
 
@@ -135,7 +137,9 @@ new  Vue({
 ```
 
 ### 編輯 APP 元件
+
 打開方法
+
 ```
 <template>
 	<div>
